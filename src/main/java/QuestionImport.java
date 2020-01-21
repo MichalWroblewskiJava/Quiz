@@ -8,15 +8,21 @@ class QuestionImport {
     private List<Question> questionList = new ArrayList<Question>();
     private File folder = new File("src\\main\\resources");
     private File[] pliki = folder.listFiles();
+    private List<String> categoryList = new ArrayList<>();
 
     File[] getCategory() {
         return this.pliki;
+    }
+
+    public List<String> getCategoryList() {
+        return categoryList;
     }
 
     List<Question> questionImport() throws FileNotFoundException {
         for (File output : pliki) {
             int categoryLength = output.getName().length();
             String category = output.getName().substring(0, categoryLength - 4);
+            categoryList.add(category);
             Scanner in = new Scanner(output);
             while (in.hasNextLine()) {
                 String question = in.nextLine();

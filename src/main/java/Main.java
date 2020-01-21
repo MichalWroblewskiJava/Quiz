@@ -11,60 +11,68 @@ public class Main {
     public static void main(String[] args) throws IOException, AWTException {
         QuestionImport questions = new QuestionImport();
         List<Question> questionList = questions.questionImport();
-        List<Question> questionToAsk = new ArrayList<>();
-        File[] category = questions.getCategory();
-        String[] categoryID = new String[category.length + 1];
+        List<String> categoryList = questions.getCategoryList();
+        categoryList.add("ALL");
+
         int catID = 0;
-        for (File categoryName : category) {
-            String categoryNameSub = categoryName.getName().substring(0, categoryName.getName().length() - 4);
-            System.out.println(catID + 1 + " " + categoryNameSub);
-            categoryID[catID] = categoryNameSub;
+        for (String categoryName : categoryList) {
+            System.out.println(catID + 1 + " " + categoryName);
             catID++;
         }
-        categoryID[catID] = "All";
-        int catAll = catID + 1;
-        System.out.println(catAll + " All");
+        int catAll = categoryList.size();
         System.out.println("Please, pick catID");
 
-        String catergoryPickString;
-        int catergoryPick = 0;
-        Scanner inputCategory = new Scanner(System.in);
+        int catergoryPick = categoryPick(catAll);
+        List<Question> questionToAsk = creatQuestionToAskList(questionList, categoryList, catergoryPick);
+        Collections.shuffle(questionToAsk);
+        question(questionToAsk);
+    }
 
+    private static int categoryPick(int catAll) {
+        int categoryPick = 0;
+        Scanner inputCategory = new Scanner(System.in);
+        String catergoryPickString;
         do {
             catergoryPickString = inputCategory.nextLine();
             if (NumberUtils.isDigits(catergoryPickString)) {
-                catergoryPick = Integer.parseInt(catergoryPickString);
+                categoryPick = Integer.parseInt(catergoryPickString);
+                if (0 >= categoryPick || categoryPick > catAll) {
+                    System.out.println("Please, pick category from 1 to " + catAll);
+                }
             } else {
                 System.out.println("Input is not a number, pick category from 1 to " + catAll);
             }
-            if (0 >= catergoryPick || catergoryPick > catAll) {
-                System.out.println("Please, pick category from 1 to " + catAll);
-            }
-        } while (0 >= catergoryPick || catergoryPick > catAll);
+        } while (0 >= categoryPick || categoryPick > catAll);
+        return categoryPick;
+    }
 
+    private static List<Question> creatQuestionToAskList(List<Question> questionList, List<String> categoryList, int catergoryPick) {
+        List<Question> questionToAsk = new ArrayList<>();
         for (Question output : questionList) {
-            int catLength = output.getCategoryName().length();
-            String catSub = output.getCategoryName().substring(0, catLength);
-            String catPick = categoryID[catergoryPick - 1];
+            String catSub = output.getCategoryName();
+            String catPick = categoryList.get(catergoryPick - 1);
             if (catSub.equalsIgnoreCase(catPick)) {
                 questionToAsk.add(output);
             }
-            if (catergoryPick == categoryID.length) {
+            if (catergoryPick == categoryList.size()) {
                 questionToAsk = questionList;
             }
         }
-        Collections.shuffle(questionToAsk);
+        return questionToAsk;
+    }
+
+    private static void question(List<Question> questionToAsk) throws IOException, AWTException {
         int points = 0;
         for (int i = 0; i < 10; i++) {
             String[] answer = questionToAsk.get(i).answers;
             String correctAnswer = answer[0];
-            List<String> consolenswer = Arrays.asList(answer);
-            Collections.shuffle(consolenswer);
+            List<String> consolAnswer = Arrays.asList(answer);
+            Collections.shuffle(consolAnswer);
             int answerId = 1;
             System.out.println("Category: " + questionToAsk.get(i).getCategoryName());
             System.out.println(questionToAsk.get(i).getQuestion());
             String[] shuffleAnswer = new String[answer.length];
-            for (String answerToConsole : consolenswer) {
+            for (String answerToConsole : consolAnswer) {
                 System.out.println(answerId + " " + answerToConsole);
                 shuffleAnswer[answerId - 1] = answerToConsole;
                 answerId++;
