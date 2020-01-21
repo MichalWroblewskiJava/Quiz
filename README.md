@@ -7,5 +7,5 @@ Files * .txt are built in way, where:
         -next lines are answers 
         -and so on 
 Class QuestionImport is responsible for importing of files content to lists. 
-Each question is added to the lists as a new obeject with few attributes.
+Each question is added to the lists as a new object with few attributes.
 Class Main has few methods which give possibility to choose category of questions, print out of questions and answers in "random" sequence and checking if answers is correct. User has the time limit of 30 second for the answer. Interaction is made by console.
